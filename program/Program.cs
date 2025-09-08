@@ -1,4 +1,4 @@
-﻿namespace Game
+﻿namespace Connect4
 {
 	public class Program
 	{

@@ -1,6 +1,6 @@
 // PROGRESS: NOT DONE
 
-namespace Game
+namespace Connect4
 {
     public class OrdinaryDisc
     {}

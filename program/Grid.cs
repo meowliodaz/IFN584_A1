@@ -1,7 +1,7 @@
 // PROGRESS
 /* TODO:
 	- Update grid
-	- Implement disc behavior?
+	- Implement disc behavior? 
 */
 
 
@@ -20,7 +20,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 
-namespace Game
+namespace Connect4
 {
 	public class Grid
 	{
