@@ -9,23 +9,36 @@
 	- Update:
 		- Ordinary
 		- Special
-	- Check winning condition
-...
+	- Check winning condition:
+		- 8 directions
+		- Max distance = winning condition - 1 (since 1 cell is already used as base, we only need to check the remaining 3, or win -1)
 
 ## Menu (?)
-...
+- Load game
+- New game
+	- Modes
+- Change grid size
 
 ## Player
 - Attributes:
 	- ID
 	- Number of discs of each type
 	- Move log (?)
-- Behaviours:
-...
+- Behaviours: Based on player type
 
 ## Human: Player
-...
+- Behaviours: None
 
 ## Computer: Player
-...
+- Behaviours:
+	- Play to win
+	- Play random
+
+## Main
+- Game loop
+- Input handling
+	- Out of bound
+	- Weird disc
+	- Wrong input format
+	- Wrong input data type
 
