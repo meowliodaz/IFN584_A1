@@ -25,12 +25,22 @@ namespace Connect4
 	public class Grid
 	{
 		// Fields
-		private IReadOnlyDictionary<string, string> discs = new Dictionary<string, string>
+		private IReadOnlyDictionary<string, string>[] discDict = new Dictionary<string, string>[2]
 		{
-			{"o", "Ordinary"},
-			{"m", "Magnetic"},
-			{"b", "Boring"},
-			{"e", "Exploding"}
+			new Dictionary<string, string>
+			{
+				{"o", "@"},
+				{"m", "M"},
+				{"b", "B"},
+				{"e", "E"}
+			},
+			new Dictionary<string, string>
+			{
+				{"o", "#"},
+				{"m", "m"},
+				{"b", "b"},
+				{"e", "e"}
+			},
 		};
 		private List<List<string>> matrix = new();
 
@@ -55,45 +65,119 @@ namespace Connect4
 		{
 			Cols = cols_;
 			Rows = rows_;
-			WinCondition = (int)Math.Round(Cols * Rows * 0.1, 0, MidpointRounding.AwayFromZero);
+			WinCondition = (int)(Cols * Rows * 0.1);
 
 			for (int i = 0; i < Cols; i++)
 			{
-				// Console.WriteLine(i);
-				List<string> row = new();
+				List<string> newCol = new();
 				for (int j = 0; j < Rows; j++)
 				{
-					Console.Write($" {j} ");
-					row.Add(" ");
+					newCol.Add(" ");
 				}
-				Console.WriteLine();
-				Matrix.Add(row);
+				Matrix.Add(newCol);
 			}
+			UpdateGrid(1,"o1");
+			UpdateGrid(2,"o1");
+			UpdateGrid(1,"o1");
+			UpdateGrid(2,"o1");
+			UpdateGrid(1,"b1");
+			UpdateGrid(2,"b1");
 		}
 
 		// Methods
-		public void UpdateGrid(params string[] args) // using param incase no argument is passed
+		public void DisplayGrid(bool test=false)
 		{
-			for (int i = 0; i < args.Length; i++)
+			for (int r = Rows-1; r >= 0; r--)
+			// Printing top-down
 			{
-				;
-			}
-		}
-
-		public void DisplayGrid()
-		{
-			for (int i = 0; i < Cols; i++)
-			{
-				for (int j = 0; j < Rows; j++)
+				for (int c = 0; c < Cols; c++)
 				{
-					Console.Write($"| {Matrix[i][j]} ");
+					Console.Write($"| {Matrix[c][r]} ");
 				}
 				Console.WriteLine("|");
 			}
-			for (int i = 0; i < Cols; i++)
+			for (int c = 0; c < Cols; c++)
 			{
-				Console.Write($"  {i+1} ");
+				Console.Write($"  {c + 1} ");
 			}
+			Console.WriteLine("\n");
+		}
+
+		public void UpdateGrid(int player, string move = "", bool test=false)
+		/*
+		
+		*/
+		{
+			string disc = move.Substring(0, 1).ToLower();
+			int playedCol = int.Parse(move.Substring(1));
+			// Console.WriteLine(disc);
+			// Console.WriteLine(playedCol);
+
+			if (disc != "o") UpdateGridSpecial(player, disc, playedCol);
+			else
+			{
+				for (int r = 0; r < Rows; r++)
+				{
+					if (Matrix[playedCol - 1][r] != " ") continue;
+					Matrix[playedCol - 1][r] = discDict[player-1][disc];
+					break;
+				}
+				DisplayGrid(test);
+			}
+		}
+		public void UpdateGridSpecial(int player, string disc, int playedCol, bool test=false)
+		/*
+		
+		*/
+		{
+			string playedDisc = discDict[player-1][disc];
+			switch (disc)
+			{
+				case "b":   // Boring Disc
+					{
+						for (int r = 0; r < Rows; r++)
+						{
+							if (Matrix[playedCol - 1][r] != " ") continue;
+							Matrix[playedCol - 1][r] = playedDisc;
+							break;
+						}
+						DisplayGrid(test);
+
+						List<string> newCol = new();
+						newCol.Add(playedDisc);
+						for (int j = 1; j < Rows; j++)
+						{
+							newCol.Add(" ");
+						}
+						Matrix[playedCol - 1] = newCol;
+						DisplayGrid(test);
+
+						List<string> newCol2 = new();
+						newCol2.Add(discDict[player - 1]["o"]);
+						for (int j = 1; j < Rows; j++)
+						{
+							newCol2.Add(" ");
+						}
+						Matrix[playedCol - 1] = newCol2;
+						DisplayGrid(test);
+
+						break;
+					}
+				case "m":   // Magnetic Disc
+					{
+						break;
+					}
+				case "e":   // Exploding Disc
+					{
+						break;
+					}
+				default: break;
+			}
+		}
+
+		public void TestUpdateGrid(string move_inputs="", bool test=true)
+		{
+
 		}
 	}
 	
