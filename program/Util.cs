@@ -16,7 +16,7 @@ namespace Connect4
 		
 		internal static void LogString(string s_)
 		{
-			File.AppendAllText("matrix.log", s_+"\n");
+			File.AppendAllText("string.log", s_+"\n");
 		}
 	}
 }
