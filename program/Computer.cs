@@ -1,6 +1,6 @@
 namespace Connect4
 {
-	public class Computer
+	public class Computer : Player
 	{
 		
 	}
