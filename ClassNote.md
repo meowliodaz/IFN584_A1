@@ -41,4 +41,8 @@
 	- Weird disc
 	- Wrong input format
 	- Wrong input data type
-
+- Save game
+- Quit game
+- Check for end
+	- Win
+	- Draw: both player run out of disc and noone has won
