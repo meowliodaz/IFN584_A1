@@ -18,5 +18,12 @@ namespace Connect4
 		{
 			File.AppendAllText("string.log", s_+"\n");
 		}
+		internal static void DeleteLog(string filename_)
+		{
+			if(File.Exists(filename_))
+			{
+				File.Delete(filename_);
+			}	
+		}
 	}
 }
