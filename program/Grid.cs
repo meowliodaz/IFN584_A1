@@ -18,6 +18,7 @@
 using System.Collections.ObjectModel;
 using System.Resources;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 
 
@@ -26,9 +27,9 @@ namespace Connect4
 	public class Grid
 	{
 		// Fields
-		private const int DELAY = 1000;			// milisecond
-		private const int DELAY_TEST = 500;	// milisecond
-		
+		private const int DELAY = 1000;     // milisecond
+		private const int DELAY_TEST = 500; // milisecond
+
 		private IReadOnlyDictionary<string, string>[] discDict = new Dictionary<string, string>[2]
 		{
 			new Dictionary<string, string>
@@ -52,6 +53,8 @@ namespace Connect4
 		public int Cols { get; protected set; }
 		public int Rows { get; protected set; }
 		public int WinCondition { get; protected set; }
+		private int WinCheckCount1 { get; set; }
+		private int WinCheckCount2 { get; set; }
 		public int moveCount { get; protected set; }
 		public List<List<string>> Matrix
 		{
@@ -68,10 +71,12 @@ namespace Connect4
 		// Constructor
 		public Grid(int cols_, int rows_)
 		{
-			moveCount = 0;
 			Cols = cols_;
 			Rows = rows_;
 			WinCondition = (int)(Cols * Rows * 0.1);
+			moveCount = 0;
+			WinCheckCount1 = 1;
+			WinCheckCount2 = 1;
 
 			for (int i = 0; i < Cols; i++)
 			{
@@ -82,10 +87,16 @@ namespace Connect4
 				}
 				Matrix.Add(newCol);
 			}
+
+			Util.LogString($"WinCondition: {WinCondition}");
 		}
 
 		// Methods
 		public void DisplayGrid(bool test = false)
+		/*
+		Clear console
+		Display grid, top-down, with delay
+		*/
 		{
 			Console.Clear();
 			string displayGrid = "";
@@ -108,22 +119,24 @@ namespace Connect4
 			Console.WriteLine($"{displayGrid}\n");
 			if (test)
 			{
-				Util.LogString("Test");
 				Thread.Sleep(DELAY_TEST);
 			}
 			else
 			{
-				Util.LogString("Play");
 				Thread.Sleep(DELAY);
 			}
 		}
 
 		public void UpdateGrid(string move = "", bool test = false)
 		/*
-		
+		Separate disc type and column number from input
+		Find column and empty cell to place disc
+		Run Special Update if it's special disc
 		*/
 		{
 			int player = moveCount % 2;
+			Util.LogString($"moveCount: {moveCount}");
+
 			string disc = move.Substring(0, 1).ToLower();
 			int playedCol = int.Parse(move.Substring(1));
 
@@ -137,17 +150,19 @@ namespace Connect4
 			DisplayGrid(test);
 			if (disc != "o") UpdateGridSpecial(player, disc, playedCol, test);
 			moveCount += 1;
+			Util.LogString($"{CheckWin()}: {WinCheckCount1}, {WinCheckCount2}");
 		}
 		public void UpdateGridSpecial(int player, string disc, int playedCol, bool test = false)
 		/*
-		
+		Run special ability
+		Run disc conversion to ordinary at the end of turn
 		*/
 		{
 			string playedDisc = discDict[player][disc];
 			switch (disc)
 			{
 				case "b":   // Boring Disc
-							// Bore column
+					// Bore column
 					List<string> newColBore1 = new();
 					newColBore1.Add(playedDisc);
 					for (int j = 1; j < Rows; j++)
@@ -158,18 +173,12 @@ namespace Connect4
 					DisplayGrid(test);
 
 					// Convert to ordinary
-					List<string> newColBore2 = new();
-					newColBore2.Add(discDict[player]["o"]);
-					for (int j = 1; j < Rows; j++)
-					{
-						newColBore2.Add(" ");
-					}
-					Matrix[playedCol - 1] = newColBore2;
+					Matrix[playedCol - 1][Matrix[playedCol - 1].IndexOf(playedDisc)] = discDict[player]["o"];
 					DisplayGrid(test);
 
 					break;
 				case "m":   // Magnetic Disc
-							// Swap nearest ally 1 position up
+					// Swap nearest ally 1 position up
 					for (int r = Rows - 1; r >= 0; r--)
 					{
 						if (Matrix[playedCol - 1][r] == " ") continue;
@@ -193,7 +202,7 @@ namespace Connect4
 
 					break;
 				case "e":   // Exploding Disc
-
+					// TODO: if there's time
 					break;
 
 				default: break;
@@ -207,6 +216,79 @@ namespace Connect4
 			{
 				UpdateGrid(moveList[i], test);
 			}
+		}
+
+		public string CheckWin()
+		/*
+		Define the 8 directions
+		Loop through 8 directions, calculate longest path of each direction
+		Go through all cells
+		Check winning of each cell through 8 paths/distances
+		*/
+		{
+			int[,] direction8 = {
+				{1,0},	{0,1},	{-1,0},	{0,-1},
+				{-1,1},	{1,-1},	{1,1},	{-1,-1}
+			};
+			int longestDistance = WinCondition - 1;
+			for (int i = 0; i < 8; i++)
+			{
+				Util.LogString($"Direction {direction8[i,0]},{direction8[i,1]}");
+				int dCol = direction8[i, 0] * longestDistance;
+				int dRow = direction8[i, 1] * longestDistance;
+
+				for (int c = 0; c < Cols; c++)
+				{
+					for (int r = 0; r < Rows; r++)
+					{
+						string rootCell = Matrix[c][r];
+						Util.LogString($"rootCell {c+1},{r+1}: \"{rootCell}\"");
+						if (c + dCol < 0 | r + dRow < 0 | c + dCol > Cols | r + dRow > Rows) continue;
+						for (int j = longestDistance - 1; j >= 0; j--)
+						{
+							Util.LogString($"\tDistance {longestDistance - j}");
+							string comparedCell = Matrix[c + direction8[i, 0] * (longestDistance - j)][r + direction8[i, 1] * (longestDistance - j)];
+							Util.LogString($"comparedCell: \"{comparedCell}\"");
+							if (rootCell == " " | rootCell != comparedCell)
+							{
+								WinCheckCount1 = 1;
+								WinCheckCount2 = 1;
+								break;
+							}
+							if (rootCell == "@")
+							{
+								WinCheckCount1 += 1;
+								WinCheckCount2 = 0;
+							}
+							if (rootCell == "#")
+							{
+								WinCheckCount1 = 0;
+								WinCheckCount2 += 1;
+							}
+						}
+						Util.LogString($"\tCheck done. (small)");
+						Util.LogString($"\tWinCheckCount1: {WinCheckCount1}");
+						Util.LogString($"\tWinCheckCount2: {WinCheckCount2}");
+
+						if (WinCheckCount1 == WinCondition)
+						{
+							Console.WriteLine($"Player 1 won: \"{WinCheckCount1}\"");
+							return "1";
+
+						}
+						if (WinCheckCount2 == WinCondition) 
+						{
+							Console.WriteLine($"Player 2 won: \"{WinCheckCount2}\"");
+							return "2";
+
+						}
+					}
+
+				}
+			}
+			
+			
+			return "";
 		}
 	}
 	
