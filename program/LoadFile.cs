@@ -4,8 +4,19 @@ namespace Connect4
 	{
 		// Fields
 		public List<List<string>> grid;
-		public Dictionary<string, string> p1;
-		public Dictionary<string, string> p2;
+		public PlayerLoadFile p1;
+		public PlayerLoadFile p2;
 
 	}
+	    public class Discs
+    {
+        public int o { get; set; }
+        public int b { get; set; }
+        public int m { get; set; }
+    }
+    public class PlayerLoadFile
+    {
+        public Discs Discs { get; set; }
+        public int ID { get; set; }
+    }
 }
