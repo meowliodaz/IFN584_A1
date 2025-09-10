@@ -29,6 +29,10 @@ namespace Connect4
 		{
 			File.AppendAllText("string.log", s_+"\n");
 		}
+		internal static void LogFile(string file_, string s_)
+		{
+			File.WriteAllText(file_, s_+"\n");
+		}
 		internal static void DeleteLog(string filename_)
 		{
 			if(File.Exists(filename_))
