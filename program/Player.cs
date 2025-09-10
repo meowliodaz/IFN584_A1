@@ -9,6 +9,24 @@ namespace Connect4
 			{"b", 2},
 			{"m", 2}
 		};
+		protected IReadOnlyDictionary<string, string>[] discTypes =
+        [
+            new Dictionary<string, string>
+			{
+				{"o", "@"},
+				{"m", "M"},
+				{"b", "B"},
+				{"e", "E"}
+			},
+			new Dictionary<string, string>
+			{
+				{"o", "#"},
+				{"m", "m"},
+				{"b", "b"},
+				{"e", "e"}
+			},
+		];
+		protected IReadOnlyDictionary<string, string> discDict = new Dictionary<string, string>();
 
 
 		// Properties
@@ -25,10 +43,16 @@ namespace Connect4
 				if (value.TryGetValue("m", out _)) discs["m"] += value["m"];
 			}
 		}
-		public Player(int start_discs)
+		public int ID { get; protected set; }
+
+		// Methods
+		public Player(int start_discs, int player_position)
 		{
 			Util.LogString("Player");
-			Discs = new Dictionary<string,int>(){{"o", start_discs}};;
+			Discs = new Dictionary<string, int>() { { "o", start_discs } };
+			ID = player_position;
+			discDict = discTypes[ID - 1];
 		}
+
 	}
 }
