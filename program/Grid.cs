@@ -179,8 +179,8 @@ namespace Connect4
 						if (Matrix[playedCol][j] == "#") disc2 += 1;
 					}
 					Matrix[playedCol - 1] = newColBore1;
-					P1.DiscCount += disc1;
-					P2.DiscCount += disc2;
+					P1.Discs = new Dictionary<string,int>(){{"o", P1.Discs["o"] + disc1}};
+					P2.Discs = new Dictionary<string,int>(){{"o", P2.Discs["o"] + disc1}};
 					DisplayGrid(test);
 
 					// Convert to ordinary
