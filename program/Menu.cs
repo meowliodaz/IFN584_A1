@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace Connect4
 {
 	public class Menu
@@ -6,12 +8,16 @@ namespace Connect4
 
 
 		// Properties
-		public string SaveFile { get; private set; }
+		public string SavedGrid { get; private set; }
+		public string SavedP1 { get; private set; }
+		public string SavedP2 { get; private set; }
 
 		// Methods
 		public Menu()
 		{
-			SaveFile = "saved_game.json";
+			SavedGrid = "saved_grid.json";
+			SavedP1 = "saved_p1.json";
+			SavedP2 = "saved_p2.json";
 		}
 		public string MenuFirst()
 		{
@@ -54,7 +60,7 @@ namespace Connect4
 			{
 				case "1": // Load game
 					Console.WriteLine("1");
-					return SaveFile;
+					return "Load";
 				case "2": // New game
 					Console.WriteLine("2");
 					int loopCount2 = 0;
@@ -177,5 +183,60 @@ namespace Connect4
 					return null;
 			}
 		}
+
+		public void SaveGame(List<List<string>> grid_, Player p1, Player p2)
+		/*
+		Saving game stat into 3 separate files
+		*/
+		{
+			// Save grid
+			var SavedGridJson = JsonSerializer.Serialize(grid_);
+			Util.LogFile(SavedGrid, SavedGridJson);
+
+			// Save player 1
+			var SavedP1Json = JsonSerializer.Serialize(p1);
+			Util.LogFile(SavedP1, SavedP1Json);
+
+			// Save player 2
+			var SavedP2Json = JsonSerializer.Serialize(p2);
+			Util.LogFile(SavedP2, SavedP2Json);
+		}
+
+		public LoadFile LoadGame()
+		/*
+		Load previous game from 3 seperate files
+		*/
+		{
+			LoadFile OldGame = new();
+			string LoadGridJson;
+			string LoadP1Json;
+			string LoadP2Json;
+			// Load grid
+			using (StreamReader LoadGrid = new StreamReader(SavedGrid))
+			{
+				LoadGridJson = LoadGrid.ReadToEnd();
+				LoadGrid.Close();
+			}
+			OldGame.grid = JsonSerializer.Deserialize<List<List<string>>>(LoadGridJson);
+
+			// Load player 1
+			using (StreamReader LoadP1 = new StreamReader(SavedGrid))
+			{
+				LoadP1Json = LoadP1.ReadToEnd();
+				LoadP1.Close();
+			}
+			OldGame.p1 = JsonSerializer.Deserialize<Dictionary<string, string>>(LoadP1Json);
+
+			// Load player 2
+			using (StreamReader LoadP2 = new StreamReader(SavedGrid))
+			{
+				LoadP2Json = LoadP2.ReadToEnd();
+				LoadP2.Close();
+			}
+			OldGame.p2 = JsonSerializer.Deserialize<Dictionary<string, string>>(LoadP2Json);
+
+			return OldGame;
+		}
+		
 	}
 }
