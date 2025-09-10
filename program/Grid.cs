@@ -67,13 +67,17 @@ namespace Connect4
 				matrix = value;
 			}
 		}
+		private Player P1 { get; set; }
+		private Player P2 { get; set; }
 
 		// Constructor
-		public Grid(int cols_, int rows_)
+		public Grid(int cols_, int rows_, Player p1, Player p2)
 		{
 			Cols = cols_;
 			Rows = rows_;
 			WinCondition = (int)(Cols * Rows * 0.1);
+			P1 = p1;
+			P2 = p2;
 			moveCount = 0;
 			WinCheckCount1 = 1;
 			WinCheckCount2 = 1;
@@ -162,14 +166,21 @@ namespace Connect4
 			switch (disc)
 			{
 				case "b":   // Boring Disc
-					// Bore column
+					int disc1 = 0;
+					int disc2 = 0;
+					
+					// Bore column and return discs to hand
 					List<string> newColBore1 = new();
 					newColBore1.Add(playedDisc);
-					for (int j = 1; j < Rows; j++)
+					for (int j = 0; j < Rows; j++)
 					{
-						newColBore1.Add(" ");
+						if (j != 0) newColBore1.Add(" ");
+						if (Matrix[playedCol][j] == "@") disc1 += 1;
+						if (Matrix[playedCol][j] == "#") disc2 += 1;
 					}
 					Matrix[playedCol - 1] = newColBore1;
+					P1.DiscCount += disc1;
+					P2.DiscCount += disc2;
 					DisplayGrid(test);
 
 					// Convert to ordinary
