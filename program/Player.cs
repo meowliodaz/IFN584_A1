@@ -10,8 +10,8 @@ namespace Connect4
 			{"m", 2}
 		};
 		protected IReadOnlyDictionary<string, string>[] discTypes =
-        [
-            new Dictionary<string, string>
+		[
+			new Dictionary<string, string>
 			{
 				{"o", "@"},
 				{"m", "M"},
@@ -45,10 +45,14 @@ namespace Connect4
 		}
 		public int ID { get; protected set; }
 
-		// Methods
-		public Player(int start_discs, int player_position)
+		// Constructor
+		public Player()
 		{
-			Util.LogString("Player");
+		}
+
+		// Methods
+		public void InitiatePlayer(int start_discs, int player_position)
+		{
 			Discs = new Dictionary<string, int>() { { "o", start_discs } };
 			ID = player_position;
 			discDict = discTypes[ID - 1];
