@@ -4,8 +4,8 @@ namespace Connect4
 	{
 		// Fields
 		private const int DELAY = 1000;     // milisecond
-		private const int DELAY_TEST = 500; // milisecond
-		private IReadOnlyDictionary<string, string>[] discDict = 
+		private const int DELAY_TEST = 300; // milisecond
+		private IReadOnlyDictionary<string, string>[] discDict =
 		[
 			new Dictionary<string, string>
 			{
@@ -46,17 +46,19 @@ namespace Connect4
 		private Player P2 { get; set; }
 
 		// Constructor
-		public Grid(int cols_, int rows_, Player p1, Player p2)
+		public Grid()
+		{
+			moveCount = 0;
+			WinCheckCount1 = 1;
+			WinCheckCount2 = 1;
+		}
+
+		// Methods
+		public void GenerateGrid(int cols_, int rows_)
 		{
 			Cols = cols_;
 			Rows = rows_;
 			WinCondition = (int)(Cols * Rows * 0.1);
-			P1 = p1;
-			P2 = p2;
-			moveCount = 0;
-			WinCheckCount1 = 1;
-			WinCheckCount2 = 1;
-
 			for (int i = 0; i < Cols; i++)
 			{
 				List<string> newCol = new();
@@ -66,11 +68,15 @@ namespace Connect4
 				}
 				Matrix.Add(newCol);
 			}
-
-			Util.LogString($"WinCondition: {WinCondition}");
 		}
+		public void LoadOldMatrix(List<List<string>> matrix_)
+		/*
+		Load previous game's grid to continue game play
+		*/
+		{
+			// TODO
 
-		// Methods
+		}
 		public void DisplayGrid(bool test = false)
 		/*
 		Clear console
@@ -143,7 +149,7 @@ namespace Connect4
 				case "b":   // Boring Disc
 					int disc1 = 0;
 					int disc2 = 0;
-					
+
 					// Bore column and return discs to hand
 					List<string> newColBore1 = new();
 					newColBore1.Add(playedDisc);
@@ -154,8 +160,8 @@ namespace Connect4
 						if (Matrix[playedCol][j] == "#") disc2 += 1;
 					}
 					Matrix[playedCol - 1] = newColBore1;
-					P1.Discs = new Dictionary<string,int>(){{"o", disc1}};
-					P2.Discs = new Dictionary<string,int>(){{"o", disc2}};
+					P1.Discs = new Dictionary<string, int>() { { "o", disc1 } };
+					P2.Discs = new Dictionary<string, int>() { { "o", disc2 } };
 					DisplayGrid(test);
 
 					// Convert to ordinary
@@ -164,7 +170,7 @@ namespace Connect4
 
 					break;
 				case "m":   // Magnetic Disc
-					// Swap nearest ally 1 position up
+							// Swap nearest ally 1 position up
 					for (int r = Rows - 1; r >= 0; r--)
 					{
 						if (Matrix[playedCol - 1][r] == " ") continue;
@@ -188,7 +194,7 @@ namespace Connect4
 
 					break;
 				case "e":   // Exploding Disc
-					// TODO: if there's time
+							// TODO: if there's time
 					break;
 
 				default: break;
@@ -213,13 +219,13 @@ namespace Connect4
 		*/
 		{
 			int[,] direction8 = {
-				{1,0},	{0,1},	{-1,0},	{0,-1},
-				{-1,1},	{1,-1},	{1,1},	{-1,-1}
+				{1,0},  {0,1},  {-1,0}, {0,-1},
+				{-1,1}, {1,-1}, {1,1},  {-1,-1}
 			};
 			int longestDistance = WinCondition - 1;
 			for (int i = 0; i < 8; i++)
 			{
-				Util.LogString($"Direction {direction8[i,0]},{direction8[i,1]}");
+				Util.LogString($"Direction {direction8[i, 0]},{direction8[i, 1]}");
 				int dCol = direction8[i, 0] * longestDistance;
 				int dRow = direction8[i, 1] * longestDistance;
 
@@ -228,7 +234,7 @@ namespace Connect4
 					for (int r = 0; r < Rows; r++)
 					{
 						string rootCell = Matrix[c][r];
-						Util.LogString($"rootCell {c+1},{r+1}: \"{rootCell}\"");
+						Util.LogString($"rootCell {c + 1},{r + 1}: \"{rootCell}\"");
 						if (c + dCol < 0 | r + dRow < 0 | c + dCol > Cols | r + dRow > Rows) continue;
 						for (int j = longestDistance - 1; j >= 0; j--)
 						{
@@ -262,7 +268,7 @@ namespace Connect4
 							return "1";
 
 						}
-						if (WinCheckCount2 == WinCondition) 
+						if (WinCheckCount2 == WinCondition)
 						{
 							Console.WriteLine($"Player 2 won: \"{WinCheckCount2}\"");
 							return "2";
@@ -274,6 +280,11 @@ namespace Connect4
 			}
 			return "";
 		}
+		public void AddPlayers(Player p1, Player p2)
+		{
+			P1 = p1;
+			P2 = p2;
+		}
+
 	}
-	
 }
