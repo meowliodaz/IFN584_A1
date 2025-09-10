@@ -20,9 +20,9 @@ namespace Connect4
 			}
 			set
 			{
-				discs["o"] = value["o"];
-				if (value.TryGetValue("b", out _)) discs["b"] = value["b"];
-				if (value.TryGetValue("m", out _)) discs["m"] = value["m"];
+				discs["o"] += value["o"];
+				if (value.TryGetValue("b", out _)) discs["b"] += value["b"];
+				if (value.TryGetValue("m", out _)) discs["m"] += value["m"];
 			}
 		}
 	}
