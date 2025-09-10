@@ -47,7 +47,7 @@ namespace Connect4
 			while (true);
 		}
 
-		public string MenuSecond(string main_menu_choice)
+		public string? MenuSecond(string main_menu_choice)
 		{
 			int boxWidth = 60;
 			switch (main_menu_choice)
@@ -174,7 +174,7 @@ namespace Connect4
 
 					return "4";
 				default:
-					return "4";
+					return null;
 			}
 		}
 	}
