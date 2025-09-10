@@ -12,7 +12,6 @@ namespace Connect4
 		// Methods
 		public Computer(int start_discs, int ID) : base(start_discs, ID)
 		{
-			Util.LogString($"Computer: disc {Discs["o"]}");
 		}
 
 		public void setGridCopy(List<List<string>> grid_)
@@ -38,11 +37,11 @@ namespace Connect4
 				for (int r = 0; r < GridRows; r++)
 				{
 					if (GridCopy[c][r] != " ") continue;
-					GridCopy[c][r] = discDict[1]["o"];
+					GridCopy[c][r] = discDict["o"];
 					
 					if (CheckWinComputer())
 					{
-						return $"{discDict[1]["o"]}{c + 1}";
+						return $"{discDict["o"]}{c + 1}";
 					}
 					GridCopy[c][r] = " ";
 					break;
