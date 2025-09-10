@@ -1,27 +1,3 @@
-// PROGRESS
-/* TODO:
-	- Update grid
-	- Implement disc behavior? 
-*/
-
-
-
-// Built-in libraries
-
-
-// 3rd party libraries
-
-
-// Namespace
-
-
-using System.Collections.ObjectModel;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
-
-
 namespace Connect4
 {
 	public class Grid
@@ -29,9 +5,8 @@ namespace Connect4
 		// Fields
 		private const int DELAY = 1000;     // milisecond
 		private const int DELAY_TEST = 500; // milisecond
-
-		private IReadOnlyDictionary<string, string>[] discDict = new Dictionary<string, string>[2]
-		{
+		private IReadOnlyDictionary<string, string>[] discDict = 
+		[
 			new Dictionary<string, string>
 			{
 				{"o", "@"},
@@ -46,7 +21,7 @@ namespace Connect4
 				{"b", "b"},
 				{"e", "e"}
 			},
-		};
+		];
 		private List<List<string>> matrix = new();
 
 		// Properties
