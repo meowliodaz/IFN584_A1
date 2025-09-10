@@ -9,11 +9,10 @@ namespace Connect4
 		private int WinCondition = 0;
 		private int WinCheckCount = 0;
 
-		// Methods
-		public Computer(int start_discs, int ID) : base(start_discs, ID)
-		{
-		}
+		// Constructor
+		
 
+		// Methods
 		public void setGridCopy(List<List<string>> grid_)
 		{
 			GridCopy = grid_;
