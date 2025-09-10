@@ -220,20 +220,20 @@ namespace Connect4
 			OldGame.grid = JsonSerializer.Deserialize<List<List<string>>>(LoadGridJson);
 
 			// Load player 1
-			using (StreamReader LoadP1 = new StreamReader(SavedGrid))
+			using (StreamReader LoadP1 = new StreamReader(SavedP1))
 			{
 				LoadP1Json = LoadP1.ReadToEnd();
 				LoadP1.Close();
 			}
-			OldGame.p1 = JsonSerializer.Deserialize<Dictionary<string, string>>(LoadP1Json);
+			OldGame.p1 = JsonSerializer.Deserialize<PlayerLoadFile>(LoadP1Json);
 
 			// Load player 2
-			using (StreamReader LoadP2 = new StreamReader(SavedGrid))
+			using (StreamReader LoadP2 = new StreamReader(SavedP2))
 			{
 				LoadP2Json = LoadP2.ReadToEnd();
 				LoadP2.Close();
 			}
-			OldGame.p2 = JsonSerializer.Deserialize<Dictionary<string, string>>(LoadP2Json);
+			OldGame.p2 = JsonSerializer.Deserialize<PlayerLoadFile>(LoadP2Json);
 
 			return OldGame;
 		}
