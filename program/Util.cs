@@ -6,11 +6,22 @@ namespace Connect4
 		internal static void LogMatrix(List<List<string>> m_)
 		{
 			string s_ = "";
-			for (int i = 0; i < m_.Count; i++)
+			for (int r = m_[0].Count - 1; r >= 0; r--)
+			// Printing top-down
 			{
-				s_ += string.Join(",", m_[i].ToArray()) + "\n";
+				s_ += string.Format("{0,-3}", r + 1);
+				for (int c = 0; c < m_.Count; c++)
+				{
+					s_ += $"| {m_[c][r]} ";
+				}
+				s_ += "|\n";
 			}
-			s_ += "\n";
+			s_ += string.Format("{0,-3}", " "); ;
+			for (int c = 0; c < m_.Count; c++)
+			{
+				if (c < 10) s_ += $"  {c + 1} ";
+				else s_ += $" {c + 1} ";
+			}
 			File.AppendAllText("matrix.log", s_);
 		}
 		
