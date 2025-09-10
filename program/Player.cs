@@ -25,5 +25,10 @@ namespace Connect4
 				if (value.TryGetValue("m", out _)) discs["m"] += value["m"];
 			}
 		}
+		public Player(int start_discs)
+		{
+			Util.LogString("Player");
+			Discs = new Dictionary<string,int>(){{"o", start_discs}};;
+		}
 	}
 }
