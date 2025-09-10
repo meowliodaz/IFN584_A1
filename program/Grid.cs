@@ -134,7 +134,8 @@ namespace Connect4
 		Run Special Update if it's special disc
 		*/
 		{
-			int player = moveCount % 2;
+			moveCount += 1;
+			int player = (moveCount - 1) % 2;
 			Util.LogString($"moveCount: {moveCount}");
 
 			string disc = move.Substring(0, 1).ToLower();
@@ -149,7 +150,6 @@ namespace Connect4
 			}
 			DisplayGrid(test);
 			if (disc != "o") UpdateGridSpecial(player, disc, playedCol, test);
-			moveCount += 1;
 			Util.LogString($"{CheckWin()}: {WinCheckCount1}, {WinCheckCount2}");
 		}
 		public void UpdateGridSpecial(int player, string disc, int playedCol, bool test = false)
