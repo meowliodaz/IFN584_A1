@@ -69,7 +69,7 @@ namespace Connect4
 			{
 				if (GridCopy[c].IndexOf(" ") != -1) colList.Add(c);
 			}
-			move += $"{colList[rnd.Next(0, colList.Count)]}";
+			move += $"{colList[rnd.Next(1, colList.Count+1)]}";
 
 			return move;
 		}
