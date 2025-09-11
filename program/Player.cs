@@ -1,3 +1,4 @@
+
 namespace Connect4
 {
 	public class Player
@@ -38,9 +39,18 @@ namespace Connect4
 			}
 			set
 			{
-				discs["o"] += value["o"];
-				if (value.TryGetValue("b", out _)) discs["b"] += value["b"];
-				if (value.TryGetValue("m", out _)) discs["m"] += value["m"];
+				if (value.TryGetValue("o", out _))
+				{
+					discs["o"] = value["o"];
+				}
+				if (value.TryGetValue("b", out _))
+				{
+					discs["b"] = value["b"];
+				}
+				if (value.TryGetValue("m", out _))
+				{
+					discs["m"] = value["m"];
+				}
 			}
 		}
 		public int ID { get; protected set; }
@@ -57,6 +67,5 @@ namespace Connect4
 			ID = player_position;
 			discDict = discTypes[ID - 1];
 		}
-
-	}
+    }
 }
