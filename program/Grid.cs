@@ -3,8 +3,8 @@ namespace Connect4
 	public class Grid
 	{
 		// Fields
-		private const int DELAY = 1000;     // milisecond
-		private const int DELAY_TEST = 300; // milisecond
+		private const int DELAY = 500;     // milisecond
+		private const int DELAY_TEST = 200; // milisecond
 		private IReadOnlyDictionary<string, string>[] discDict =
 		[
 			new Dictionary<string, string>
@@ -31,6 +31,7 @@ namespace Connect4
 		private int WinCheckCount1 { get; set; }
 		private int WinCheckCount2 { get; set; }
 		public int moveCount { get; protected set; }
+		public Player[] playerList = new Player[2];
 		public List<List<string>> Matrix
 		{
 			get
@@ -42,13 +43,24 @@ namespace Connect4
 				matrix = value;
 			}
 		}
-		private Player P1 { get; set; }
-		private Player P2 { get; set; }
+
+		public Player[] PlayerList
+		{
+			get
+			{
+				return playerList;
+			}
+			protected set
+			{
+				playerList[0] = value[0];
+				playerList[1] = value[1];
+			}
+		}
 
 		// Constructor
 		public Grid()
 		{
-			moveCount = 0;
+			moveCount = 1;
 			WinCheckCount1 = 1;
 			WinCheckCount2 = 1;
 		}
@@ -56,6 +68,8 @@ namespace Connect4
 		// Methods
 		public void GenerateGrid(int cols_, int rows_)
 		{
+			Matrix = [];
+			moveCount = 1;
 			Cols = cols_;
 			Rows = rows_;
 			WinCondition = (int)(Cols * Rows * 0.1);
@@ -69,12 +83,18 @@ namespace Connect4
 				Matrix.Add(newCol);
 			}
 		}
-		public void LoadOldMatrix(List<List<string>> matrix_)
+		public void LoadOldGrid(List<List<string>> grid_, int moveCount_)
 		/*
 		Load previous game's grid to continue game play
 		*/
 		{
 			// TODO
+			Matrix = grid_;
+			Cols = grid_.Count;
+			Rows = grid_[0].Count;
+			WinCondition = (int)(Cols * Rows * 0.1);
+
+			moveCount = moveCount_;
 
 		}
 		public void DisplayGrid(bool test = false)
@@ -83,6 +103,7 @@ namespace Connect4
 		Display grid, top-down, with delay
 		*/
 		{
+			Util.LogMatrix(Matrix);
 			Console.Clear();
 			string displayGrid = "";
 			for (int r = Rows - 1; r >= 0; r--)
@@ -119,9 +140,7 @@ namespace Connect4
 		Run Special Update if it's special disc
 		*/
 		{
-			moveCount += 1;
 			int player = (moveCount - 1) % 2;
-			Util.LogString($"moveCount: {moveCount}");
 
 			string disc = move.Substring(0, 1).ToLower();
 			int playedCol = int.Parse(move.Substring(1));
@@ -135,7 +154,7 @@ namespace Connect4
 			}
 			DisplayGrid(test);
 			if (disc != "o") UpdateGridSpecial(player, disc, playedCol, test);
-			Util.LogString($"{CheckWin()}: {WinCheckCount1}, {WinCheckCount2}");
+			moveCount += 1;
 		}
 		public void UpdateGridSpecial(int player, string disc, int playedCol, bool test = false)
 		/*
@@ -147,8 +166,8 @@ namespace Connect4
 			switch (disc)
 			{
 				case "b":   // Boring Disc
-					int disc1 = 0;
-					int disc2 = 0;
+					int disc1 = PlayerList[0].Discs["o"];
+					int disc2 = PlayerList[1].Discs["o"];
 
 					// Bore column and return discs to hand
 					List<string> newColBore1 = new();
@@ -156,12 +175,12 @@ namespace Connect4
 					for (int j = 0; j < Rows; j++)
 					{
 						if (j != 0) newColBore1.Add(" ");
-						if (Matrix[playedCol][j] == "@") disc1 += 1;
-						if (Matrix[playedCol][j] == "#") disc2 += 1;
+						if (Matrix[playedCol - 1][j] == "@") disc1 -= 1;
+						if (Matrix[playedCol - 1][j] == "#") disc2 -= 1;
 					}
 					Matrix[playedCol - 1] = newColBore1;
-					P1.Discs = new Dictionary<string, int>() { { "o", disc1 } };
-					P2.Discs = new Dictionary<string, int>() { { "o", disc2 } };
+					PlayerList[0].Discs = new Dictionary<string, int>() { { "o", disc1 } };
+					PlayerList[1].Discs = new Dictionary<string, int>() { { "o", disc2 } };
 					DisplayGrid(test);
 
 					// Convert to ordinary
@@ -225,7 +244,6 @@ namespace Connect4
 			int longestDistance = WinCondition - 1;
 			for (int i = 0; i < 8; i++)
 			{
-				Util.LogString($"Direction {direction8[i, 0]},{direction8[i, 1]}");
 				int dCol = direction8[i, 0] * longestDistance;
 				int dRow = direction8[i, 1] * longestDistance;
 
@@ -234,13 +252,10 @@ namespace Connect4
 					for (int r = 0; r < Rows; r++)
 					{
 						string rootCell = Matrix[c][r];
-						Util.LogString($"rootCell {c + 1},{r + 1}: \"{rootCell}\"");
 						if (c + dCol < 0 | r + dRow < 0 | c + dCol > Cols | r + dRow > Rows) continue;
 						for (int j = longestDistance - 1; j >= 0; j--)
 						{
-							Util.LogString($"\tDistance {longestDistance - j}");
 							string comparedCell = Matrix[c + direction8[i, 0] * (longestDistance - j)][r + direction8[i, 1] * (longestDistance - j)];
-							Util.LogString($"comparedCell: \"{comparedCell}\"");
 							if (rootCell == " " | rootCell != comparedCell)
 							{
 								WinCheckCount1 = 1;
@@ -258,9 +273,6 @@ namespace Connect4
 								WinCheckCount2 += 1;
 							}
 						}
-						Util.LogString($"\tCheck done. (small)");
-						Util.LogString($"\tWinCheckCount1: {WinCheckCount1}");
-						Util.LogString($"\tWinCheckCount2: {WinCheckCount2}");
 
 						if (WinCheckCount1 == WinCondition)
 						{
@@ -275,15 +287,35 @@ namespace Connect4
 
 						}
 					}
-
 				}
 			}
 			return "";
 		}
 		public void AddPlayers(Player p1, Player p2)
 		{
-			P1 = p1;
-			P2 = p2;
+			PlayerList = [p1, p2];
+		}
+
+		public bool OutOfDiscs(int playerId_)
+		{
+			if (PlayerList[playerId_].Discs["o"] <= 0
+				& PlayerList[playerId_].Discs["b"] <= 0
+				& PlayerList[playerId_].Discs["m"] <= 0) return true;
+
+			return false;
+		}
+		public bool OutOf1Disc(string disc_, int playerId_)
+		{
+			if (PlayerList[playerId_].Discs[disc_] <= 0) return true;
+			return false;
+		}
+		public bool ColumnFull(int playedCol_)
+		{
+			for (int r = Matrix[playedCol_-1].Count - 1; r >= 0; r--)
+			{
+				if (Matrix[playedCol_-1][r] == " ") return false;
+			}
+			return true;
 		}
 
 	}
