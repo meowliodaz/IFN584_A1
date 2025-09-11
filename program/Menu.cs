@@ -11,6 +11,8 @@ namespace Connect4
 		public string SavedGrid { get; private set; }
 		public string SavedP1 { get; private set; }
 		public string SavedP2 { get; private set; }
+		public string SavedGameMode { get; private set; }
+		public string SavedMoveCountMode { get; private set; }
 
 		// Methods
 		public Menu()
@@ -18,6 +20,8 @@ namespace Connect4
 			SavedGrid = "saved_grid.json";
 			SavedP1 = "saved_p1.json";
 			SavedP2 = "saved_p2.json";
+			SavedGameMode = "saved_game_mode.json";
+			SavedMoveCountMode = "saved_move_count.json";
 		}
 		public string MenuFirst()
 		{
@@ -67,7 +71,6 @@ namespace Connect4
 					string? ErrorMessage2 = "";
 					do
 					{
-						// Sub Menu 2
 						loopCount2 += 1;
 						Console.Clear();
 						Console.WriteLine(string.Format("o{0}o", new string('-', boxWidth)));
@@ -97,7 +100,6 @@ namespace Connect4
 					string? ErrorMessage3 = "";
 					do
 					{
-						// Sub Menu 3
 						loopCount3 += 1;
 						Console.Clear();
 						Console.WriteLine(string.Format("o{0}o", new string('-', boxWidth)));
@@ -106,6 +108,8 @@ namespace Connect4
 						Console.WriteLine(string.Format("{0,-55}|", "|\t New size can't be smaller than default."));
 						Console.WriteLine(string.Format("{0,-55}|", "|\t New size can be a square."));
 						Console.WriteLine(string.Format("{0,-55}|", "|\t Number of Rows can't be bigger than of Columns."));
+						Console.WriteLine(string.Format("{0,-55}|", "|\t If you want to change grid size to default,"));
+						Console.WriteLine(string.Format("{0,-55}|", "|\t      don't type in anything and press Enter."));
 						Console.WriteLine(string.Format("o{0}o", new string('-', boxWidth)));
 
 						if (loopCount3 != 1) Console.WriteLine($"{ErrorMessage3}");
@@ -119,13 +123,17 @@ namespace Connect4
 						int Rows, Cols;
 						bool RowIsNum = int.TryParse(InputRows, out Rows);
 						bool ColIsNum = int.TryParse(InputCols, out Cols);
-
-						if (InputRows == null | !RowIsNum)
+						
+						if (InputRows == null | InputCols == null | InputRows == "" | InputCols == "")
+						{
+							return $"6x7";
+						}
+						else if (!RowIsNum)
 						{
 							ErrorMessage3 = $"\n[ERROR]\t \"{InputRows}\" for row is not a valid input.\n\t Please input a number following the rule above and press Enter again!";
 							continue;
 						}
-						else if (InputCols == null | !ColIsNum)
+						else if (!ColIsNum)
 						{
 							ErrorMessage3 = $"\n[ERROR]\t \"{InputCols}\" for column is not a valid input.\n\t Please input a number following the rule above and press Enter again!";
 							continue;
@@ -145,7 +153,6 @@ namespace Connect4
 					while (true);
 				case "4": // Instructions
 					Console.WriteLine("4");
-					// Sub Menu 3
 					boxWidth = 90;
 					Console.Clear();
 					Console.WriteLine(string.Format("o{0}o", new string('-', boxWidth)));
@@ -173,6 +180,11 @@ namespace Connect4
 					Console.WriteLine(string.Format("{0,-85}|", "|\t"));
 					Console.WriteLine(string.Format("{0,-85}|", "|\t Winning condition changes depending on grid size."));
 					Console.WriteLine(string.Format("{0,-85}|", "|\t      [Winning condition] = [Number of Rows] x [Number of Columns] x 0.1"));
+					Console.WriteLine(string.Format("{0,-85}|", "|\t"));
+					Console.WriteLine(string.Format("{0,-85}|", "|\t During gameplay, to save game, type \"s\" then Enter."));
+					Console.WriteLine(string.Format("{0,-85}|", "|\t                  to quit game, type \"q\" then Enter."));
+					Console.WriteLine(string.Format("{0,-85}|", "|\t                  to save and quit, type \"sq\" then Enter."));
+					Console.WriteLine(string.Format("{0,-85}|", "|\t                  to go back to main menu, type \"mm\" then Enter."));
 					Console.WriteLine(string.Format("o{0}o", new string('-', boxWidth)));
 
 					Console.Write("Press Enter to return to Main Menu!");
@@ -184,13 +196,13 @@ namespace Connect4
 			}
 		}
 
-		public void SaveGame(List<List<string>> grid_, Player p1, Player p2)
+		public void SaveGame(List<List<string>> grid, Player p1, Player p2, int gameMode_, int moveCount_)
 		/*
 		Saving game stat into 3 separate files
 		*/
 		{
 			// Save grid
-			var SavedGridJson = JsonSerializer.Serialize(grid_);
+			var SavedGridJson = JsonSerializer.Serialize(grid);
 			Util.LogFile(SavedGrid, SavedGridJson);
 
 			// Save player 1
@@ -200,6 +212,14 @@ namespace Connect4
 			// Save player 2
 			var SavedP2Json = JsonSerializer.Serialize(p2);
 			Util.LogFile(SavedP2, SavedP2Json);
+
+			// Save game mode
+			var SavedGameModeJson = JsonSerializer.Serialize(gameMode_);
+			Util.LogFile(SavedGameMode, SavedGameModeJson);
+
+			// Save move count
+			var SavedMoveCountJson = JsonSerializer.Serialize(moveCount_);
+			Util.LogFile(SavedMoveCountMode, SavedMoveCountJson);
 		}
 
 		public LoadFile LoadGame()
@@ -211,6 +231,8 @@ namespace Connect4
 			string LoadGridJson;
 			string LoadP1Json;
 			string LoadP2Json;
+			string LoadGameModeJson;
+			string LoadMoveCountJson;
 			// Load grid
 			using (StreamReader LoadGrid = new StreamReader(SavedGrid))
 			{
@@ -234,6 +256,22 @@ namespace Connect4
 				LoadP2.Close();
 			}
 			OldGame.p2 = JsonSerializer.Deserialize<PlayerLoadFile>(LoadP2Json);
+
+			// Load game mode
+			using (StreamReader LoadGameMode = new StreamReader(SavedGameMode))
+			{
+				LoadGameModeJson = LoadGameMode.ReadToEnd();
+				LoadGameMode.Close();
+			}
+			OldGame.gameMode = JsonSerializer.Deserialize<int>(LoadGameModeJson);
+
+			// Load game mode
+			using (StreamReader LoadMoveCount = new StreamReader(SavedMoveCountMode))
+			{
+				LoadMoveCountJson = LoadMoveCount.ReadToEnd();
+				LoadMoveCount.Close();
+			}
+			OldGame.moveCount = JsonSerializer.Deserialize<int>(LoadMoveCountJson);
 
 			return OldGame;
 		}
