@@ -22,6 +22,7 @@ namespace Connect4
 				if (c < 10) s_ += $"  {c + 1} ";
 				else s_ += $" {c + 1} ";
 			}
+			s_ += "\n\n";
 			File.AppendAllText("matrix.log", s_);
 		}
 		
