@@ -1,11 +1,13 @@
 namespace Connect4
 {
-	public class LoadFile
-	{
-		// Fields
-		public List<List<string>> grid;
-		public PlayerLoadFile p1;
-		public PlayerLoadFile p2;
+    public class LoadFile
+    {
+        // Fields
+        public List<List<string>> grid;
+        public PlayerLoadFile p1;
+        public PlayerLoadFile p2;
+        public int gameMode;
+        public int moveCount;
 
 	}
 	    public class Discs
