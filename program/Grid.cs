@@ -103,8 +103,8 @@ namespace Connect4
 		Display grid, top-down, with delay
 		*/
 		{
-			Util.LogMatrix(Matrix);
 			Console.Clear();
+			Console.WriteLine();
 			string displayGrid = "";
 			for (int r = Rows - 1; r >= 0; r--)
 			// Printing top-down
@@ -175,8 +175,8 @@ namespace Connect4
 					for (int j = 0; j < Rows; j++)
 					{
 						if (j != 0) newColBore1.Add(" ");
-						if (Matrix[playedCol - 1][j] == "@") disc1 -= 1;
-						if (Matrix[playedCol - 1][j] == "#") disc2 -= 1;
+						if (Matrix[playedCol - 1][j] == "@") disc1 += 1;
+						if (Matrix[playedCol - 1][j] == "#") disc2 += 1;
 					}
 					Matrix[playedCol - 1] = newColBore1;
 					PlayerList[0].Discs = new Dictionary<string, int>() { { "o", disc1 } };
@@ -276,15 +276,12 @@ namespace Connect4
 
 						if (WinCheckCount1 == WinCondition)
 						{
-							Console.WriteLine($"Player 1 won: \"{WinCheckCount1}\"");
 							return "1";
 
 						}
 						if (WinCheckCount2 == WinCondition)
 						{
-							Console.WriteLine($"Player 2 won: \"{WinCheckCount2}\"");
 							return "2";
-
 						}
 					}
 				}
@@ -311,11 +308,9 @@ namespace Connect4
 		}
 		public bool ColumnFull(int playedCol_)
 		{
-			for (int r = Matrix[playedCol_-1].Count - 1; r >= 0; r--)
-			{
-				if (Matrix[playedCol_-1][r] == " ") return false;
-			}
-			return true;
+			// If column has no empty cell => Column is full
+			if (Matrix[playedCol_ - 1].IndexOf(" ") == -1) return true;
+			return false;
 		}
 
 	}
