@@ -3,6 +3,7 @@ namespace Connect4
     public class LoadFile
     {
         // Fields
+        public bool FileExist = true;
         public List<List<string>> grid;
         public PlayerLoadFile p1;
         public PlayerLoadFile p2;
