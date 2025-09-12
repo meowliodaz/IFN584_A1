@@ -115,7 +115,8 @@ namespace Connect4
 							Console.WriteLine();
 							Console.WriteLine("This is test mode.");
 							Console.WriteLine("Input a string of multiple moves to see a series of play.");
-							Console.WriteLine("For example: o1,o5,o3,m4,b7");
+							Console.WriteLine("Example sequence: o1,o5,o3,m4,b7");
+							Console.WriteLine();
 							Console.Write("Your sequence: ");
 							string? sequence = Console.ReadLine();
 
@@ -144,9 +145,10 @@ namespace Connect4
 							}
 							if (ErrorTestMessage != "")
 							{
+								grid.DisplayGrid();
 								continue;
 							}
-							grid.TestUpdateGrid(sequence);
+							winner = grid.TestUpdateGrid(sequence);
 							break;
 						}
 						while (true);
@@ -277,7 +279,7 @@ namespace Connect4
 
 				string winnerString;
 				if (winner == "1") winnerString = "Player 1";
-				else if (gameMode == 1) winnerString = "Player 2";
+				else if (gameMode == 1 | gameMode == 3) winnerString = "Player 2";
 				else winnerString = "Computer";
 				Console.WriteLine();
 				Console.WriteLine($"The winner is: {winnerString}");
@@ -285,7 +287,7 @@ namespace Connect4
 
 				Console.WriteLine("Do you want to play again?\n");
 				Console.WriteLine("y: Yes \t mm: Back to main menu \t q: Quit game");
-				Console.WriteLine("\nAny input not mentioned above with quit the game");
+				Console.WriteLine("\nAny input not mentioned above will quit the game");
 
 				Console.Write("\tYour decision: ");
 				string? command = Console.ReadLine();
