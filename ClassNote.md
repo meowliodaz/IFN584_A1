@@ -8,7 +8,8 @@
 	- Display
 	- Update:
 		- Ordinary
-		- Special
+		- Special:
+			- Handles disc returns
 	- Check winning condition:
 		- 8 directions
 		- Max distance = winning condition - 1 (since 1 cell is already used as base, we only need to check the remaining 3, or win -1)
@@ -21,7 +22,7 @@
 
 ## Player
 - Attributes:
-	- ID
+	- ID (?)
 	- Number of discs of each type
 	- Move log (?)
 - Behaviours: Based on player type
@@ -32,6 +33,7 @@
 ## Computer: Player
 - Behaviours:
 	- Play to win
+		- Get copy of grid to run simulation
 	- Play random
 
 ## Main
@@ -41,6 +43,7 @@
 	- Weird disc
 	- Wrong input format
 	- Wrong input data type
+- Handles disc count, normally
 - Save game
 - Quit game
 - Check for end
