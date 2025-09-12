@@ -23,7 +23,10 @@ namespace Connect4
 			Grid grid = new();
 			Computer[] GamePlayers = [new Computer(), new Computer()];
 			int gameMode = 0;
+
 			string winner = "";
+			string winnerString = "";
+
 
 			// Menu
 			Menu GameMenu = new();
@@ -91,7 +94,7 @@ namespace Connect4
 			}
 
 			// Game loop
-			bool playAgain = true;
+			bool playAgain = false;
 			do
 			{
 				grid.DisplayGrid();
@@ -101,7 +104,7 @@ namespace Connect4
 					// Test mode
 					bool testMode = false;
 					string ErrorTestMessage = "";
-					if (UserSubMenuChoice.ToLower() == "3")
+					if (gameMode == 3)
 					{
 						testMode = true;
 						do
@@ -130,29 +133,41 @@ namespace Connect4
 
 							foreach (string testMove in sequence.Split(","))
 							{
-								if (!"sqobmm".Contains(testMove.Substring(0, 1).ToLower()))
-									ErrorTestMessage = $"[ERROR] Wrong input format. 1st character need to be \"o\",\"b\", or \"m\". Please input a new move!\n";
-								else if (!int.TryParse(testMove.Substring(1), out _))
-									ErrorTestMessage = $"[ERROR] Wrong input format. From the 2nd character onwards, there can only be number. Please input a new move!\n";
-								else if (grid.OutOf1Disc(testMove.Substring(0, 1), (grid.moveCount - 1) % 2))
-									ErrorTestMessage += $"[ERROR] Invalid move. Your disc {testMove[0]} is 0. Please play a different disc!\n";
-								// 		Out of bound
-								else if (int.Parse(testMove.Substring(1)) <= 0 | int.Parse(testMove.Substring(1)) > grid.Cols)
-									ErrorTestMessage += $"[ERROR] Invalid move. Played column is out of bound. Please play within column 1 and {grid.Cols}!\n";
-								// 		Column filled
-								else if (grid.ColumnFull(int.Parse(testMove.Substring(1))))
-									ErrorTestMessage += $"[ERROR] Invalid move. Column is full. Please play a different column within 1 and {grid.Cols}!\n";
+								ErrorTestMessage = ParseMoveInput(testMove, GameMenu, grid, GamePlayers, gameMode);
+								if (ErrorTestMessage != "")
+								{
+									break;
+								}
 							}
-							if (ErrorTestMessage != "")
+
+							if (ErrorTestMessage == "mm")
+							{
+								Util.LogString("mm");
+								return true;
+							}
+							else if (ErrorTestMessage == "q" | ErrorTestMessage == "sq")
+							{
+								Util.LogString("q");
+								return false;
+							}
+							else if (ErrorTestMessage != "")
 							{
 								grid.DisplayGrid();
 								continue;
 							}
+
 							winner = grid.TestUpdateGrid(sequence);
+							Util.LogMatrix(grid.Matrix);
+							Util.LogString($"winner: \"{winner}\"");
+
+							if (winner == "1") winnerString = "The winner is: Player 1";
+							else if (winner == "2") winnerString = "The winner is: Player 2";
+							else winnerString = "Test done. No one wins!";
+
 							break;
 						}
 						while (true);
-						
+
 					}
 					if (testMode) break;
 
@@ -204,54 +219,18 @@ namespace Connect4
 							continue;
 						}
 						move = move.ToLower();
-						//		Player save
-						if (move == "s")
-						{
-							GameMenu.SaveGame(grid.Matrix, GamePlayers[0], GamePlayers[1], gameMode, grid.moveCount);
-							ErrorMessage = "[INFO] Game saved.";
-						}
-						//		Player back to main menu
-						else if (move == "mm")
+
+						ErrorMessage = ParseMoveInput(move, GameMenu, grid, GamePlayers, gameMode);
+
+						if (ErrorMessage == "mm")
 						{
 							return true;
 						}
-						//		Player quit
-						else if (move == "q")
+						else if (ErrorMessage == "q" | ErrorMessage == "sq")
 						{
-							Environment.Exit(0);
 							return false;
 						}
-						//		Player save and quit
-						else if (move == "sq")
-						{
-							GameMenu.SaveGame(grid.Matrix, GamePlayers[0], GamePlayers[1], gameMode, grid.moveCount);
-							Environment.Exit(0);
-							return false;
-						}
-						// 		Check 1st character is letter
-						if (move.Length <= 1)
-						{
-							if (!"s".Contains(move.Substring(0, 1).ToLower()))
-								ErrorMessage = $"[ERROR] Wrong input format. Missing column. Please input a new move!\n";
-						}
-						else if (!"sqobmm".Contains(move.Substring(0, 1).ToLower()))
-							ErrorMessage = $"[ERROR] Wrong input format. 1st character need to be \"o\",\"b\", or \"m\". Please input a new move!\n";
-						// 		Check remaining characters are numbers
-						else if (!int.TryParse(move.Substring(1), out _))
-							ErrorMessage = $"[ERROR] Wrong input format. From the 2nd character onwards, there can only be number. Please input a new move!\n";
-
-						// Process invalid moves
-						// 		Out of played type of disc
-						else if (grid.OutOf1Disc(move.Substring(0, 1), PlayerID))
-							ErrorMessage += $"[ERROR] Invalid move. Your disc {move[0]} is 0. Please play a different disc!\n";
-						// 		Out of bound
-						else if (int.Parse(move.Substring(1)) <= 0 | int.Parse(move.Substring(1)) > grid.Cols)
-							ErrorMessage += $"[ERROR] Invalid move. Played column is out of bound. Please play within column 1 and {grid.Cols}!\n";
-						// 		Column filled
-						else if (grid.ColumnFull(int.Parse(move.Substring(1))))
-							ErrorMessage += $"[ERROR] Invalid move. Column is full. Please play a different column within 1 and {grid.Cols}!\n";
-
-						if (ErrorMessage != "")
+						else if (ErrorMessage != "")
 						{
 							grid.DisplayGrid();
 							continue;
@@ -277,12 +256,16 @@ namespace Connect4
 				}
 				while (!grid.OutOfDiscs(0) & !grid.OutOfDiscs(1) & winner == "");
 
-				string winnerString;
-				if (winner == "1") winnerString = "Player 1";
-				else if (gameMode == 1 | gameMode == 3) winnerString = "Player 2";
-				else winnerString = "Computer";
+				if (winnerString == "")
+				{
+					if (winner == "1") winnerString = "The winner is: Player 1";
+					else if (winner == "2" & (gameMode == 1 | gameMode == 3)) winnerString = "The winner is: Player 2";
+					else if (winner == "2" & gameMode == 2) winnerString = "The winner is: Computer";
+					else winnerString = "It's a draw";
+				}
+
 				Console.WriteLine();
-				Console.WriteLine($"The winner is: {winnerString}");
+				Console.WriteLine(winnerString);
 				Console.WriteLine();
 
 				Console.WriteLine("Do you want to play again?\n");
@@ -312,7 +295,7 @@ namespace Connect4
 						{"b", 2},
 						{"m", 2}
 					};
-					
+
 					Dictionary<string, int> discs2 = new(){
 						{"o", (int)(cols * rows * 0.5)},
 						{"b", 2},
@@ -324,6 +307,9 @@ namespace Connect4
 					// Generate grid
 					grid.GenerateGrid(cols, rows);
 					grid.AddPlayers(GamePlayers[0], GamePlayers[1]);
+
+					winner = "";
+					winnerString = "";
 				}
 				else if (command == "mm")
 				{
@@ -338,6 +324,59 @@ namespace Connect4
 			}
 			while (playAgain);
 			return false;
+		}
+		static string ParseMoveInput(string move, Menu GameMenu, Grid grid, Player[] GamePlayers, int gameMode)
+		{
+			// Process weird input
+			string ErrorMessage = "";
+			move = move.ToLower();
+			//		Player save
+			if (move == "s")
+			{
+				GameMenu.SaveGame(grid.Matrix, GamePlayers[0], GamePlayers[1], gameMode, grid.moveCount);
+				ErrorMessage = "[INFO] Game saved.";
+			}
+			//		Player back to main menu
+			else if (move == "mm")
+			{
+				return "mm";
+			}
+			//		Player quit
+			else if (move == "q")
+			{
+				Environment.Exit(0);
+				return "q";
+			}
+			//		Player save and quit
+			else if (move == "sq")
+			{
+				GameMenu.SaveGame(grid.Matrix, GamePlayers[0], GamePlayers[1], gameMode, grid.moveCount);
+				Environment.Exit(0);
+				return "sq";
+			}
+			// 		Check 1st character is letter
+			if (move.Length <= 1)
+			{
+				if (!"s".Contains(move.Substring(0, 1).ToLower()))
+					ErrorMessage = $"[ERROR] Wrong input format. Missing column. Please input a new move!\n";
+			}
+			else if (!"sqobmm".Contains(move.Substring(0, 1).ToLower()))
+				ErrorMessage = $"[ERROR] Wrong input format. 1st character need to be \"o\",\"b\", or \"m\". Please input a new move!\n";
+			// 		Check remaining characters are numbers
+			else if (!int.TryParse(move.Substring(1), out _))
+				ErrorMessage = $"[ERROR] Wrong input format. From the 2nd character onwards, there can only be number. Please input a new move!\n";
+
+			// Process invalid moves
+			// 		Out of played type of disc
+			else if (grid.OutOf1Disc(move.Substring(0, 1), (grid.moveCount - 1) % 2))
+				ErrorMessage += $"[ERROR] Invalid move. Your disc {move[0]} is 0. Please play a different disc!\n";
+			// 		Out of bound
+			else if (int.Parse(move.Substring(1)) <= 0 | int.Parse(move.Substring(1)) > grid.Cols)
+				ErrorMessage += $"[ERROR] Invalid move. Played column is out of bound. Please play within column 1 and {grid.Cols}!\n";
+			// 		Column filled
+			else if (grid.ColumnFull(int.Parse(move.Substring(1))))
+				ErrorMessage += $"[ERROR] Invalid move. Column is full. Please play a different column within 1 and {grid.Cols}!\n";
+			return ErrorMessage;
 		}
     }
 }
