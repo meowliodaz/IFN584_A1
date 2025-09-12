@@ -252,7 +252,7 @@ namespace Connect4
 					for (int r = 0; r < Rows; r++)
 					{
 						string rootCell = Matrix[c][r];
-						if (c + dCol < 0 | r + dRow < 0 | c + dCol > Cols | r + dRow > Rows) continue;
+						if (c + dCol < 0 | r + dRow < 0 | c + dCol >= Cols | r + dRow >= Rows) continue;
 						for (int j = longestDistance - 1; j >= 0; j--)
 						{
 							string comparedCell = Matrix[c + direction8[i, 0] * (longestDistance - j)][r + direction8[i, 1] * (longestDistance - j)];
