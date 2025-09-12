@@ -223,12 +223,22 @@ namespace Connect4
 		public string TestUpdateGrid(string move_inputs = "", bool test = true)
 		{
 			string[] moveList = move_inputs.ToLower().Split(',');
+			string checkWon = "";
 			for (int i = 0; i < moveList.Length; i++)
 			{
 				UpdateGrid(moveList[i], test);
-				if (CheckWin() != "") break;
+
+				Dictionary<string, int> newDiscs = new()
+				{
+					{ moveList[i].Substring(0,1), playerList[(moveCount - 1) % 2].Discs[moveList[i].Substring(0,1)]-1 }
+				};
+				playerList[(moveCount - 1) % 2].Discs = newDiscs;
+
+				checkWon = CheckWin();
+				if (checkWon != "") return checkWon;
 			}
-			return CheckWin();
+			return checkWon;
+			
 		}
 
 		public string CheckWin()
@@ -278,11 +288,15 @@ namespace Connect4
 
 						if (WinCheckCount1 == WinCondition)
 						{
+							WinCheckCount1 = 1;
+							WinCheckCount2 = 1;
 							return "1";
 
 						}
-						if (WinCheckCount2 == WinCondition)
+						else if (WinCheckCount2 == WinCondition)
 						{
+							WinCheckCount1 = 1;
+							WinCheckCount2 = 1;
 							return "2";
 						}
 					}
