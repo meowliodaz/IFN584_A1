@@ -53,6 +53,11 @@ namespace Connect4
 					ErrorMessage = $"\n[ERROR]\t \"{MainMenuChoice}\" is not a valid input.\n\t Please input 1, 2, 3, 4, or 5, and press Enter again!";
 					continue;
 				}
+				else if (MainMenuChoice.ToLower() == "1" )
+				{
+					LoadFile OldGame = LoadGame();
+					ErrorMessage = $"\n[ERROR]\t \"Load file does not exist. Please start a New Game!";
+				}
 				else return MainMenuChoice;
 			}
 			while (true);
@@ -64,10 +69,8 @@ namespace Connect4
 			switch (main_menu_choice)
 			{
 				case "1": // Load game
-					Console.WriteLine("1");
 					return "Load";
 				case "2": // New game
-					Console.WriteLine("2");
 					int loopCount2 = 0;
 					string? ErrorMessage2 = "";
 					do
@@ -96,7 +99,6 @@ namespace Connect4
 					}
 					while (true);
 				case "3": // Change grid size
-					Console.WriteLine("3");
 					int loopCount3 = 0;
 					string? ErrorMessage3 = "";
 					do
@@ -153,7 +155,6 @@ namespace Connect4
 					}
 					while (true);
 				case "4": // Instructions
-					Console.WriteLine("4");
 					boxWidth = 90;
 					Console.Clear();
 					Console.WriteLine(string.Format("o{0}o", new string('-', boxWidth)));
@@ -237,6 +238,19 @@ namespace Connect4
 			string LoadP2Json;
 			string LoadGameModeJson;
 			string LoadMoveCountJson;
+
+			// Check files existence
+			string[] SavedFiles = [SavedGrid, SavedP1, SavedP2, SavedGameMode, SavedMoveCountMode];
+			foreach (string filename in SavedFiles)
+			{
+				if (!File.Exists(filename))
+				{
+					LoadFile NonExistenceGame = new();
+					NonExistenceGame.FileExist = false;
+					return NonExistenceGame;
+				}
+			}
+			
 			// Load grid
 			using (StreamReader LoadGrid = new StreamReader(SavedGrid))
 			{
