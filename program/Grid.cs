@@ -109,14 +109,14 @@ namespace Connect4
 			for (int r = Rows - 1; r >= 0; r--)
 			// Printing top-down
 			{
-				displayGrid += string.Format("{0,-3}", r + 1);
+				displayGrid += string.Format("\t{0,-3}", r + 1);
 				for (int c = 0; c < Cols; c++)
 				{
 					displayGrid += $"| {Matrix[c][r]} ";
 				}
 				displayGrid += "|\n";
 			}
-			displayGrid += string.Format("{0,-3}", " "); ;
+			displayGrid += string.Format("\t{0,-3}", " "); ;
 			for (int c = 0; c < Cols; c++)
 			{
 				if (c < 10) displayGrid += $"  {c + 1} ";
@@ -220,13 +220,15 @@ namespace Connect4
 			}
 		}
 
-		public void TestUpdateGrid(string move_inputs = "", bool test = true)
+		public string TestUpdateGrid(string move_inputs = "", bool test = true)
 		{
 			string[] moveList = move_inputs.ToLower().Split(',');
 			for (int i = 0; i < moveList.Length; i++)
 			{
 				UpdateGrid(moveList[i], test);
+				if (CheckWin() != "") break;
 			}
+			return CheckWin();
 		}
 
 		public string CheckWin()
