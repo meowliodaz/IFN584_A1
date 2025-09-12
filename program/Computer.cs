@@ -17,9 +17,15 @@ namespace Connect4
 		// Methods
 		public void setGridCopy(List<List<string>> grid_)
 		{
+			GridCopy = new();
 			for (int c = 0; c < grid_.Count; c++)
 			{
-				GridCopy.Add(grid_[c]);
+				List<string> col = new();
+				for (int r = 0; r < grid_[c].Count; r++)
+				{
+					col.Add(grid_[c][r]);
+				}
+				GridCopy.Add(col);
 			}
 			GridCols = GridCopy.Count;
 			GridRows = GridCopy[0].Count;
