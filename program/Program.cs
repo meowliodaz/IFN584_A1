@@ -71,12 +71,9 @@ namespace Connect4
 				// Load grid
 				grid.LoadOldGrid(OldGame.grid, OldGame.moveCount);
 				grid.AddPlayers(GamePlayers[0], GamePlayers[1]);
-				Util.LogString($"grid.moveCount: {grid.moveCount}");
-				Util.LogString($"OldGame.moveCount: {OldGame.moveCount}");
 
 				// Load game mode
 				gameMode = OldGame.gameMode;
-				Util.LogString($"OldGame.gameMode: {OldGame.gameMode}");
 			}
 			// New game => Configure game mode
 			else if ("123".Contains(UserSubMenuChoice.ToLower()))
@@ -160,7 +157,7 @@ namespace Connect4
 					// Get move, from player or computer
 					string? move = "";
 					int PlayerID = (grid.moveCount - 1) % 2;
-					Util.LogString($"PlayerID: {PlayerID}");
+					Util.LogString($"\nPlayerID: {PlayerID}");
 					if (PlayerID == 1 & gameMode == 2)
 					{
 						// Computer move
@@ -170,7 +167,7 @@ namespace Connect4
 						GamePlayers[1].setGridCopy(grid.Matrix);
 						move = GamePlayers[1].PlayToWin();
 						Console.WriteLine($"Computer played: {move}");
-						Thread.Sleep(3000);
+						Thread.Sleep(1000);
 					}
 					else
 					{
@@ -185,16 +182,25 @@ namespace Connect4
 						}
 
 						Console.WriteLine();
+						Console.WriteLine($"Winning condition: {grid.WinCondition} continuous discs");
+						Console.WriteLine();
 						Console.WriteLine($"Player {PlayerID + 1} remaining discs:");
 						Console.Write($"Ordinary (o): {currentDiscs["o"]}    ");
 						Console.Write($"Boring (b): {currentDiscs["b"]}    ");
 						Console.WriteLine($"Magnetic (o): {currentDiscs["m"]}");
+						Console.WriteLine();
+						Console.WriteLine($"Example move: o7 - \"o\" is the disc type, \"7\" is the column.");
 
 						Console.WriteLine();
 						Console.Write("Your move: ");
 						move = Console.ReadLine();
 						// Process weird input
-						if (move == null | move == "") ErrorMessage = "[ERROR] Empty input. Move cannot be empty. Please input a new move!\n";
+						if (move == null | move == "")
+						{
+							ErrorMessage = "[ERROR] Empty input. Move cannot be empty. Please input a new move!\n";
+							grid.DisplayGrid();
+							continue;
+						}
 						move = move.ToLower();
 						//		Player save
 						if (move == "s")
@@ -252,6 +258,7 @@ namespace Connect4
 
 					// Update gameplay
 					// 		Update grid
+					Util.LogString($"move: {move}");
 					grid.UpdateGrid(move);
 
 					// 		Update discs
@@ -260,16 +267,14 @@ namespace Connect4
 						{ move.Substring(0,1), GamePlayers[PlayerID].Discs[move.Substring(0,1)]-1 }
 					};
 					GamePlayers[PlayerID].Discs = newDiscs;
-					string str_ = $"{grid.moveCount}: {JsonSerializer.Serialize(newDiscs)}\n";
-					str_ += $"{grid.moveCount}: {JsonSerializer.Serialize(GamePlayers[PlayerID].Discs)}\n";
-					Util.LogFile("string.log", str_);
+					// Thread.Sleep(1000);
 
 					winner = grid.CheckWin();
 					Util.LogString($"winner: {winner}");
+					// Thread.Sleep(1000);
 				}
 				while (!grid.OutOfDiscs(0) & !grid.OutOfDiscs(1) & winner == "");
 
-				Util.LogString($"gameMode: {gameMode}");
 				string winnerString;
 				if (winner == "1") winnerString = "Player 1";
 				else if (gameMode == 1) winnerString = "Player 2";
@@ -280,7 +285,7 @@ namespace Connect4
 
 				Console.WriteLine("Do you want to play again?\n");
 				Console.WriteLine("y: Yes \t mm: Back to main menu \t q: Quit game");
-				Console.WriteLine("\nAny input not mentioned abgove with quit the game");
+				Console.WriteLine("\nAny input not mentioned above with quit the game");
 
 				Console.Write("\tYour decision: ");
 				string? command = Console.ReadLine();
