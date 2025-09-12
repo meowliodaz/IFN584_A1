@@ -53,12 +53,13 @@ namespace Connect4
 					ErrorMessage = $"\n[ERROR]\t \"{MainMenuChoice}\" is not a valid input.\n\t Please input 1, 2, 3, 4, or 5, and press Enter again!";
 					continue;
 				}
-				else if (MainMenuChoice.ToLower() == "1" )
+				else if (MainMenuChoice.ToLower() == "1" & !LoadGame().FileExist)
 				{
-					LoadFile OldGame = LoadGame();
 					ErrorMessage = $"\n[ERROR]\t \"Load file does not exist. Please start a New Game!";
+					continue;
 				}
-				else return MainMenuChoice;
+
+				return MainMenuChoice;
 			}
 			while (true);
 		}
