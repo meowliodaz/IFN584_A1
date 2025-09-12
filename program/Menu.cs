@@ -39,6 +39,7 @@ namespace Connect4
 				Console.WriteLine(string.Format("{0,-48}|", "|\t\t 2.New game"));
 				Console.WriteLine(string.Format("{0,-48}|", "|\t\t 3.Change grid size"));
 				Console.WriteLine(string.Format("{0,-48}|", "|\t\t 4.Instructions"));
+				Console.WriteLine(string.Format("{0,-48}|", "|\t\t 5.Quit game"));
 				Console.WriteLine(string.Format("o{0}o", new string('-', boxWidth)));
 
 				if (loopCount != 1) Console.WriteLine($"{ErrorMessage}");
@@ -47,9 +48,9 @@ namespace Connect4
 				Console.Write("Type in the number of your option, and press Enter: ");
 				string? MainMenuChoice = Console.ReadLine();
 
-				if (MainMenuChoice == null | !"1234".Contains(MainMenuChoice.ToLower()))
+				if (MainMenuChoice == null | !"12345".Contains(MainMenuChoice.ToLower()))
 				{
-					ErrorMessage = $"\n[ERROR]\t \"{MainMenuChoice}\" is not a valid input.\n\t Please input 1, 2, 3, or 4, and press Enter again!";
+					ErrorMessage = $"\n[ERROR]\t \"{MainMenuChoice}\" is not a valid input.\n\t Please input 1, 2, 3, 4, or 5, and press Enter again!";
 					continue;
 				}
 				else return MainMenuChoice;
@@ -157,40 +158,43 @@ namespace Connect4
 					Console.Clear();
 					Console.WriteLine(string.Format("o{0}o", new string('-', boxWidth)));
 					Console.WriteLine(string.Format("{0,-78}|", "|\t\t Instructions"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t The game follows basic rule of Connect4, except..."));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t SPECIAL DISCS!!"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t There are 2 types of special discs: Boring, and Magnetic."));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t The game follows basic rule of Connect4, except..."));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t SPECIAL DISCS!!"));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t There are 2 types of special discs: Boring, and Magnetic."));
 					Console.WriteLine(string.Format("{0,-85}|", "|\t"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t Boring Disc drills through the column, lands on the lowest row,"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t      and turn into an ordinary disc."));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t      All discs that is bored through will return to the respective player."));
+					Console.WriteLine(string.Format("{0,-89}|", "|Boring Disc \t Drills through the column, lands on the lowest row,"));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t and turn into an ordinary disc."));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t All discs that is bored through will return to the respective player."));
 					Console.WriteLine(string.Format("{0,-85}|", "|\t"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t Magnetic Disc seek its highest ally in the column,"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t      exchange the ally with the disc right above said ally,"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t      and turn itself into an ordinary disc."));
+					Console.WriteLine(string.Format("{0,-91}|", "|Magnetic Disc \t Seek its highest ally in the column,"));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t exchange the ally with the disc right above said ally,"));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t and turn itself into an ordinary disc."));
 					Console.WriteLine(string.Format("{0,-85}|", "|\t"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t To play a normal, ordinary disc: o7 => o is the disc, 7 is the column."));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t To play a boring disc: b1 => b is the disc, 1 is the column."));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t To play a magnetic disc: m14 => m is the disc, 14 is the column."));
+					Console.WriteLine(string.Format("{0,-86}|", "|Gameplay \t To play a normal, ordinary disc: o7 => o is the disc, 7 is the column."));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t To play a boring disc: b1 => b is the disc, 1 is the column."));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t To play a magnetic disc: m14 => m is the disc, 14 is the column."));
 					Console.WriteLine(string.Format("{0,-85}|", "|\t"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t Discs display in game for PLAYER 1:"));
-					Console.WriteLine(string.Format("{0,-77}|", "|\t Ordinary: @\t Boring: B\t Magnetic: M"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t Discs display in game for PLAYER 2:"));
-					Console.WriteLine(string.Format("{0,-77}|", "|\t Ordinary: #\t Boring: b\t Magnetic: m"));
+					Console.WriteLine(string.Format("{0,-85}|", "|Display \t Discs display in game for PLAYER 1:"));
+					Console.WriteLine(string.Format("{0,-70}|", "|\t\t Ordinary: @\t Boring: B\t Magnetic: M"));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t Discs display in game for PLAYER 2:"));
+					Console.WriteLine(string.Format("{0,-70}|", "|\t\t Ordinary: #\t Boring: b\t Magnetic: m"));
 					Console.WriteLine(string.Format("{0,-85}|", "|\t"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t Winning condition changes depending on grid size."));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t      [Winning condition] = [Number of Rows] x [Number of Columns] x 0.1"));
+					Console.WriteLine(string.Format("{0,-85}|", "|Winning \t Winning condition changes depending on grid size."));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t [Winning condition] = [Number of Rows] x [Number of Columns] x 0.1"));
 					Console.WriteLine(string.Format("{0,-85}|", "|\t"));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t During gameplay, to save game, type \"s\" then Enter."));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t                  to quit game, type \"q\" then Enter."));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t                  to save and quit, type \"sq\" then Enter."));
-					Console.WriteLine(string.Format("{0,-85}|", "|\t                  to go back to main menu, type \"mm\" then Enter."));
+					Console.WriteLine(string.Format("{0,-90}|", "|Game options \t To save game, type \"s\" then Enter."));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t to quit game, type \"q\" then Enter."));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t to save and quit, type \"sq\" then Enter."));
+					Console.WriteLine(string.Format("{0,-78}|", "|\t\t to go back to main menu, type \"mm\" then Enter."));
 					Console.WriteLine(string.Format("o{0}o", new string('-', boxWidth)));
 
 					Console.Write("Press Enter to return to Main Menu!");
 					Console.Read();
 
 					return "4";
+				case "5": // Quit
+					Environment.Exit(0);
+					return "Quit";
 				default:
 					return null;
 			}
